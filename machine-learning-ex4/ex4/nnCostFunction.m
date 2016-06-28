@@ -82,22 +82,25 @@ J = (1/m)*sum(mat(:));
 J += (lambda/2/m)*(sum((Theta1(:,2:size(Theta1,2)).^2)(:)) + sum((Theta2(:,2:size(Theta2,2)).^2)(:)));
 
 %%%%%%%%%% Backpropagation %%%%%%%%%%
-Delta1 = zeros(hidden_layer_size, hidden_layer_size+1);
-Delta2 = zeros(num_labels, num_labels);
+Delta1 = zeros(hidden_layer_size, input_layer_size+1);
+Delta2 = zeros(num_labels, hidden_layer_size+1);
 for t = 1:m
-	z2 = Theta1*X(t,:)';
+	a1b = X(t,:)';
+	z2 = Theta1*a1b;
 	a2b = [1;sigmoid(z2)];
 	z3 = Theta2*a2b;
 	a3b = sigmoid(z3);
 	delta3 = a3b - Y(:,t);
 	delta2 = (Theta2'*delta3)(2:end).*sigmoidGradient(z2);
-	Delta1 += delta2*a2b';
-	Delta2 += delta3*a3b';
+	Delta1 += delta2*a1b';
+	Delta2 += delta3*a2b';
 endfor
 Theta1_grad = (1/m)*Delta1;
 Theta2_grad = (1/m)*Delta2;
 
-
+%%%%%%%%%% Regularized Backprop %%%%%%%%%%
+Theta1_grad(:,2:end) += (lambda/m)*Theta1(:,2:end);
+Theta2_grad(:,2:end) += (lambda/m)*Theta2(:,2:end);
 
 % -------------------------------------------------------------
 
