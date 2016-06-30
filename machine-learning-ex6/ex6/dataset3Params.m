@@ -23,12 +23,27 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
-
-
-
-
-
-
+CVec = [.01 .03 .1 .3 1 3 10 30];
+sigmaVec = [.01 .03 .1 .3 1 3 10 30];
+bestC = 0;
+bestSig = 0;
+bestErr = 9999999;
+for i = 1:length(CVec)
+	c = CVec(i);
+	for j=1:length(sigmaVec)
+		sig = sigmaVec(j);
+		model = svmTrain(X, y, c, @(x1, x2) gaussianKernel(x1, x2, sig));
+		predictions = svmPredict(model, Xval);
+		err = mean(double(predictions ~= yval));
+		if (err<bestErr)
+			bestErr = err;
+			bestC = c;
+			bestSig = sig;
+		endif
+	endfor
+endfor
+C = bestC;
+sigma = bestSig;
 % =========================================================================
 
 end

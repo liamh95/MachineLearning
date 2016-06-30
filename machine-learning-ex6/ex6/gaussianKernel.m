@@ -16,7 +16,7 @@ sim = 0;
 %
 %
 
-
+sim = e^(-sumsq(x1-x2)/sigma^2/2);
 
 
 
